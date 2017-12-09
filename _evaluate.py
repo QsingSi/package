@@ -6,10 +6,33 @@ from ._package import roc_curve
 from ._package import plt
 from ._decorator import runtime_log
 from ._package import pd
+from ._package import math
 
 
 __all__ = ['calc_max_ks', 'calc_ks',
-           'sample_weight', 'plot_ks_threshold', 'plot_learning_curve']
+           'sample_weight', 'plot_ks_threshold', 'plot_learning_curve', 'dis_lat_lon']
+
+
+def _rad(degree):
+    return degree * math.pi / 180.0
+
+
+def dis_lat_lon(lat1, lon1, lat2, lon2):
+    '''根据两点的经度和纬度，计算其之间的距离，单位:km'''
+    radLat1 = [_rad(lat) for lat in lat1]
+    radLat2 = [_rad(lat) for lat in lat2]
+    radLon1 = [_rad(lon) for lon in lon1]
+    radLon2 = [_rad(lon) for lon in lon2]
+    a = np.array(radLat1) - np.array(radLat2)
+    b = np.array(radLon1) - np.array(radLon2)
+    EARTH_RADIUS = 6378.137
+    res = []
+    for i in range(len(a)):
+        s = 2 * math.asin(math.sqrt(math.pow(math.sin(a[i] / 2), 2) + math.cos(
+            radLat1[i]) * math.cos(radLat2[i]) * math.pow(math.sin(b[i] / 2), 2)))
+        s *= EARTH_RADIUS
+        res.append(s)
+    return np.array(res)
 
 
 @runtime_log

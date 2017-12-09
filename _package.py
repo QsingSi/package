@@ -7,6 +7,7 @@ from collections import Counter
 from sklearn.model_selection import cross_val_score, learning_curve, GridSearchCV
 import matplotlib.pyplot as plt
 import time
+import math
 from sklearn.pipeline import Pipeline, make_pipeline
 
 __all__ = ['roc_curve', 'wraps', 'np', 'Counter',
