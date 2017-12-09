@@ -1,25 +1,18 @@
 from ._package import np
 from ._package import learning_curve
 from ._package import Counter
-from ._package import wraps
+from ._decorator import log
 from ._package import roc_curve
 from ._package import plt
+from ._decorator import runtime_log
+from ._package import pd
 
 
-__all__ = ['log', 'calc_max_ks', 'calc_ks',
+__all__ = ['calc_max_ks', 'calc_ks',
            'sample_weight', 'plot_ks_threshold', 'plot_learning_curve']
 
 
-def log(func):
-    @wraps(func)
-    def wrapper(*args, **kw):
-        print('Start running %s...' % func.__name__)
-        res = func(*args, **kw)
-        print('End %s...' % func.__name__)
-        return res
-    return wrapper
-
-
+@runtime_log
 @log
 def calc_max_ks(estimator, X, y):
     if hasattr(estimator, 'predict_proba'):
@@ -34,6 +27,24 @@ def calc_max_ks(estimator, X, y):
     return max(tpr - fpr)
 
 
+@runtime_log
+@log
+def do_oversamping(self, df):
+    '''保存xgboost模型时用,对数据做上采样'''
+    df_p = df[df['label'] == 1.0]
+    df_n = df[df['label'] == 0.0]
+    assert len(df_p) + len(df_n) == len(df)
+    if len(df_p) < len(df_n):
+        df_p = pd.concat(
+            [df_p, df_p.sample(len(df_n) - len(df_p), replace=True)])
+    elif len(df_n) < len(df_p):
+        df_n = pd.concat(
+            [df_n, df_n.sample(len(df_p) - len(df_n), replace=True)])
+    assert len(df_p) == len(df_n)
+    return pd.concat([df_p, df_n]).sample(frac=1.)
+
+
+@runtime_log
 @log
 def calc_ks(y_true, y_pred):
     fpr, tpr, _ = roc_curve(y_true, y_pred)
