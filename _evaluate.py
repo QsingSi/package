@@ -7,10 +7,20 @@ from ._package import plt
 from ._decorator import runtime_log
 from ._package import pd
 from ._package import math
+from ._package import mean_squared_log_error
+from ._package import make_scorer
 
 
-__all__ = ['calc_max_ks', 'calc_ks',
+__all__ = ['calc_max_ks', 'calc_ks', 'RMSLE',
            'sample_weight', 'plot_ks_threshold', 'plot_learning_curve', 'dis_lat_lon']
+
+
+def _MSLE(y_true, y_pred):
+    loss = mean_squared_log_error(y_true, y_pred)
+    return math.sqrt(loss)
+
+
+RMSLE = make_scorer(_MSLE, greater_is_better=False)
 
 
 def _rad(degree):

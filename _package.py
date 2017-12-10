@@ -1,5 +1,5 @@
 from __future__ import print_function, division
-from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_curve, mean_squared_log_error, make_scorer
 from functools import wraps
 import numpy as np
 import pandas as pd
