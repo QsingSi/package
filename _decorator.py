@@ -1,6 +1,8 @@
 from ._package import wraps
 from ._package import time
 
+__all__ = ['log', 'runtime_log']
+
 
 def log(func):
     @wraps(func)
