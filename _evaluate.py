@@ -77,13 +77,6 @@ def do_oversamping(self, df):
     return pd.concat([df_p, df_n]).sample(frac=1.)
 
 
-@runtime_log
-@log
-def calc_ks(y_true, y_pred):
-    fpr, tpr, _ = roc_curve(y_true, y_pred)
-    return max(tpr - fpr)
-
-
 def sample_weight(y):
     cnt = Counter(y)
     cnt0, cnt1 = cnt.get(0), cnt.get(1)
@@ -92,13 +85,17 @@ def sample_weight(y):
     return sample
 
 
-def plot_ks_threshold(y_true, y_pred):
-    assert len(y_pred) == len(y_true), 'wrong value...'
-    if len(y_pred[0]) == 2:
-        prob = [p[1] for p in y_pred]
+def plot_ks_threshold(estimator, X, y, drop=True):
+    if hasattr(estimator, 'predict_proba'):
+        pred = estimator.predict_proba(X)
+        if len(pred[0]) == 2:
+            prob = [p[1] for p in pred]
+        else:
+            prob = pred
     else:
-        prob = y_pred
-    fpr, tpr, threshold = roc_curve(y_true, prob)
+        prob = estimator.predict(X)
+    fpr, tpr, _ = roc_curve(y, prob)
+    fpr, tpr, threshold = roc_curve(y, prob, drop_intermediate=drop)
     ks = tpr - fpr
     plt.figure()
     plt.title('KS -- Threshold')
