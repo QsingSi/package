@@ -87,7 +87,7 @@ def calc_ks(y_true, y_pred):
 def sample_weight(y):
     cnt = Counter(y)
     cnt0, cnt1 = cnt.get(0), cnt.get(1)
-    upsample = int(cnt0 / cnt1)
+    upsample = int(cnt0 / cnt1 + 0.5)
     sample = [upsample if label == 1 else 1 for label in y]
     return sample
 

@@ -20,6 +20,6 @@ def runtime_log(func):
         start = time.time()
         res = func(*args, **kw)
         end = time.time()
-        print('%s runs %s seconds...' % (func.__name__, end - start))
+        print('%s runs %.2f seconds' % (func.__name__, end - start))
         return res
     return get_runtime
